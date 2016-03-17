@@ -1,0 +1,16 @@
+@import controllers.LoginData
+@(loginForm: Form[LoginData])(implicit request: RequestHeader)
+
+@import views.html.helper.CSRF
+@import helper._
+@import play.api.Play.current
+@import play.api.i18n.Messages.Implicits._
+
+@main("CSRF test problem") {
+  @helper.form(action = routes.CsrfApp.csrfPost()) {
+    @inputText(loginForm("username"), 'label -> "Username", 'placeholder -> "Username")
+    @inputPassword(loginForm("password"))
+    @CSRF.formField
+    <button type="submit">Submit</button>
+  }
+}

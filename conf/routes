@@ -1,0 +1,67 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET     /                           @controllers.Application.index
+GET     /test                       @controllers.Application.test
+GET     /test2                      @controllers.Application.test2
+#link like /show/1 表示id必须为数字
+GET     /show/$id<[0-9]+>           @controllers.Application.showid(id: Int)
+GET     /show/:str                  @controllers.Application.showstr(str: String)
+#link like /page?pageId=1
+GET     /page                       @controllers.Application.page(pageId: Int ?= 1)
+GET     /redirect                   @controllers.Application.redirect
+GET     /xml                        @controllers.Application.xml
+GET     /json                       @controllers.Application.json
+GET     /header                     @controllers.Application.header
+GET     /session                    @controllers.Application.session
+GET     /session2                   @controllers.Application.session2
+GET     /session3                   @controllers.Application.session3
+GET     /log1                       @controllers.Application.log1
+GET     /log2                       @controllers.Application.log2
+GET     /log3                       @controllers.Application.log3
+GET     /toupload                   @controllers.Application.toupload
+GET     /asyn1                      @controllers.Application.asyn1
+GET     /asyn2                      @controllers.Application.asyn2
+GET     /streaming1                 @controllers.Application.streaming1
+GET     /streaming2                 @controllers.Application.streaming2
+GET     /streaming3                 @controllers.Application.streaming3
+GET     /comet1                     @controllers.Application.comet1
+GET     /websocket1                 @controllers.Application.websocket1
+GET     /socket1                    @controllers.Application.socket1
+GET     /websocket2                 @controllers.Application.websocket2
+GET     /socket2                    @controllers.Application.socket2
+GET     /websocket3                 @controllers.Application.websocket3
+GET     /socket3                    @controllers.Application.socket3
+GET     /template1                  @controllers.Application.template1
+GET     /jdbc1                      @controllers.Application.jdbc1
+GET     /slick1                     @controllers.slick.SlickApp.slick1
+GET     /slick2                     @controllers.slick.SlickApp.slick2
+GET     /slick3                     @controllers.slick.SlickApp.slick3
+GET     /json1                      @controllers.Application.json1
+GET     /ws1                        @controllers.Application.ws1
+GET     /ws2                        @controllers.Application.ws2
+GET     /ws3                        @controllers.Application.ws3
+GET     /form1/add                  @controllers.FormApp.add
+GET     /csrfToPost                 @controllers.CsrfApp.csrfToPost
+
+#使用actor进行依赖注入的时候,App是一个class而不是object,此时,要在route前添加@
+GET     /hello/:name                @controllers.ActorApp.sayHello(name)
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               @controllers.Assets.at(path="/public", file)
+# 使用外部目录
+GET     /file/*file                 @controllers.ExternalAssets.at(path="/Volumes/Share/Book/", file)
+
+POST    /test2                      @controllers.Application.test2
+POST    /bp1                        @controllers.Application.bp1
+POST    /bp2                        @controllers.Application.bp2
+POST    /bp3                        @controllers.Application.bp3
+POST    /bp4                        @controllers.Application.bp4
+POST    /bp5                        @controllers.Application.bp5
+POST    /tt1                        @controllers.Application.tt1
+POST    /upload                     @controllers.Application.upload
+POST    /form1/save                 @controllers.FormApp.save
+
+POST     /csrfPost                  @controllers.CsrfApp.csrfPost

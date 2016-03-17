@@ -1,0 +1,33 @@
+@import controllers.Customer
+@import controllers.Order
+
+@(customer: Customer, orders: List[Order])
+
+@*********************
+* 可重用代码 *
+*********************@
+@display(order: Order) = {
+    @order.title ($@order.price)
+}
+
+@*********************
+* 可重用代码，完整函数 *
+*********************@
+@title(text: String) = @{
+    text.split(' ').map(_.capitalize).mkString(" ")
+}
+<h1>@title("hello world")</h1>
+
+<h1>Welcome @customer.name!</h1>
+
+<ul>
+@for(order <- orders) {
+    <li>@display(order)</li>
+}
+</ul>
+
+@if(customer.name == "cookeem") {
+    <h1>Is @customer.name!</h1>
+} else {
+    <h1>Not cookeem</h1>
+}
