@@ -123,6 +123,6 @@ object ActorTest extends App {
     // the actor wasn't stopped within 5 seconds
     case e: akka.pattern.AskTimeoutException =>
   }
-
+  //关闭system
   system.terminate()
 }
