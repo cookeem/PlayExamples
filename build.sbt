@@ -28,6 +28,7 @@ libraryDependencies ++= Seq(
   "org.fusesource.leveldbjni" % "leveldbjni-all" % "1.8",
   "com.okumin" %% "akka-persistence-sql-async" % "0.3.1",
   "org.scala-lang.modules" %% "scala-pickling" % "0.10.1",
+  "org.seleniumhq.selenium" % "selenium-java" % "2.53.0",
   "com.github.mauricio" %% "mysql-async" % "0.2.16",
   "mysql" % "mysql-connector-java" % "5.1.37"
 )
