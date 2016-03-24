@@ -29,6 +29,8 @@ libraryDependencies ++= Seq(
   "com.okumin" %% "akka-persistence-sql-async" % "0.3.1",
   "org.scala-lang.modules" %% "scala-pickling" % "0.10.1",
   "com.github.mauricio" %% "mysql-async" % "0.2.16",
+  "com.sksamuel.scrimage" %% "scrimage-core" % "2.1.1",
+  "com.sksamuel.scrimage" %% "scrimage-io-extra" % "2.1.1",
   "org.seleniumhq.selenium" % "selenium-java" % "2.53.0", //selenium for java
   "redis.clients" % "jedis" % "2.8.1",  //redis for java
   "mysql" % "mysql-connector-java" % "5.1.37"
