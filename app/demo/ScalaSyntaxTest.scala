@@ -1,7 +1,5 @@
 package demo
 
-import javax.annotation.meta.TypeQualifierNickname
-
 import scala.collection.mutable.ArrayBuffer
 import scala.util.control.Breaks._
 
@@ -355,7 +353,7 @@ object ScalaSyntaxTest extends App {
   myFunc002(5)(20)
 
   //类型的类型界定,类型界定<%已经deprecated
-  class TypeClass1[T <: Comparable](val1: T)
+  class TypeClass1[T <: Any](val1: T)
 
   val typeClass1 = new TypeClass1[Int](1)
   val typeClass2 = new TypeClass1[String]("cookeem")
@@ -551,8 +549,8 @@ object ScalaSyntaxTest extends App {
   }
 
   //伴生对象apply
-  case class Company(name: String, address: String, userCount: Int)
-  case object Company {
+  class Company(name: String, address: String, userCount: Int)
+  object Company {
     def apply(name: String, address: String, userCount: Int) = new Company(name, address, userCount)
   }
   val gmccCompany = Company("gmcc", "zhujiangxilu", 2000)
