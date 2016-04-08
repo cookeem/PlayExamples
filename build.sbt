@@ -33,6 +33,9 @@ libraryDependencies ++= Seq(
   "com.sksamuel.scrimage" %% "scrimage-io-extra" % "2.1.1",
   "org.seleniumhq.selenium" % "selenium-java" % "2.53.0", //selenium for java
   "redis.clients" % "jedis" % "2.8.1",  //redis for java
+  "org.apache.zookeeper" % "zookeeper" % "3.4.6",
+  "edu.uci.ics" % "crawler4j" % "4.2",
+  "org.elasticsearch" % "elasticsearch" % "2.3.0",
   "mysql" % "mysql-connector-java" % "5.1.37"
 )
 
