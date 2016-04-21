@@ -8,6 +8,7 @@ import akka.actor._
 import akka.stream.{IOResult, ActorMaterializer}
 import akka.stream.scaladsl._
 import akka.util.ByteString
+import demo.HttpComponentDemo
 
 import play.api._
 import play.api.db._
@@ -36,6 +37,7 @@ case class Order(title: String, price: Double)
 @Singleton
 class Application @Inject() (db: DBApi, ws: WSClient) extends Controller {
   //必须在controllers中声明materialize
+  println(s"implicit val system")
   implicit val system = ActorSystem("system")
   implicit val materializer = ActorMaterializer()
 
