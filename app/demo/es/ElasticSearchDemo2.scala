@@ -22,6 +22,11 @@ object ElasticSearchDemo2 extends App {
     .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("localhost"), 9300))
     .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("localhost"), 9301))
 
+  //删除所有索引
+  client.admin().indices().prepareGetIndex().execute().actionGet().getIndices.foreach(idxName => {
+    client.admin().indices().prepareDelete(idxName).execute().actionGet()
+  })
+
   /* 相当于:
     $ curl -XPUT 'http://localhost:9200/website/' -d '{
       "settings" : {
@@ -48,7 +53,8 @@ object ElasticSearchDemo2 extends App {
           .field("number_of_shards", "2")
           .field("number_of_replicas", "2")
           .startObject("analysis")
-            .field("analyzer","index_ansj")
+            .field("analyzer", "index_ansj")
+            .field("search_analyzer", "query_ansj")
           .endObject()
         .endObject()
     )

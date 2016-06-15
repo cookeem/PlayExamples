@@ -164,6 +164,7 @@ object HttpComponentDemo extends App {
     val firefoxProfile = new FirefoxProfile
     firefoxProfile.setPreference("permissions.default.image", 2)
 //    firefoxProfile.setPreference("permissions.default.script", 2)
+    firefoxProfile.setPreference("plugin.state.flash", 0)
     firefoxProfile.setPreference("permissions.default.stylesheet", 2)
     firefoxProfile.setPreference("permissions.default.subdocument", 2)
     val driver = new FirefoxDriver(firefoxProfile)
@@ -193,12 +194,14 @@ object HttpComponentDemo extends App {
       pageHeight = scroll.getSize.getHeight
     }
     htmlContent = driver.getPageSource
-    doc = Jsoup.parse(htmlContent)
+    doc = Jsoup.parse(htmlContent, url)
+    //图片抽取
     doc.select("img").foreach(img => {
       if (img.attr("src").startsWith("http://") || img.attr("src").startsWith("https://")) {
         println(img.attr("src"))
       }
     })
+    //内容区抽取
     doc.select("#img-content").foreach(body => {
       println(body)
     })
