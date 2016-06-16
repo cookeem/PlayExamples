@@ -9,7 +9,8 @@ import akka.actor.ActorLogging
 import java.net.InetSocketAddress
 
 /*
-   测试: telnet localhost 4444
+   测试1: telnet localhost 4444
+   测试2: ls -al | nc localhost 4444
 */
 class SimplisticHandler extends Actor with ActorLogging {
   log.info( "SimplisticHandler Actor started")
