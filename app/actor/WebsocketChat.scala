@@ -52,7 +52,7 @@ class ChatRoom(roomId: Int, actorSystem: ActorSystem) {
   private[this] val chatRoomActor = actorSystem.actorOf(Props(classOf[ChatRoomActor], roomId))
   println(s"create new chatRoomActor: $chatRoomActor")
 
-  val source = Source.actorRef[ChatEvent](bufferSize = 5, OverflowStrategy.fail)
+  val source = Source.actorRef[ChatEvent](bufferSize = Int.MaxValue, OverflowStrategy.fail)
 
   def chatService(user: String) = Flow.fromGraph(GraphDSL.create(source) { implicit builder =>
     chatSource => //source provideed as argument

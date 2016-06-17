@@ -21,6 +21,13 @@ object StreamTest1 extends App {
   implicit val materializer = ActorMaterializer()
   //创建一个Source
   val source: Source[Int, NotUsed] = Source(1 to 100)
+
+  val actorSource = Source.actorRef[String](bufferSize = Int.MaxValue, OverflowStrategy.fail)
+  actorSource.mapMaterializedValue { ref =>
+    println(ref)
+    ref ! "hello"
+  }
+
   //对Source进行阶乘转换transformation
   val factorials = source.scan(BigInt(1)){(acc, next) => acc * next}
   //把Source输出到文件,FileIO是一种Sink,从source到sink,runWith的参数是sink
