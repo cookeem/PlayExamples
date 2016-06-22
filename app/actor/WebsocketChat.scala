@@ -3,6 +3,9 @@ package actor
 /**
   * Created by cookeem on 16/6/15.
   */
+
+import java.io.{File, FileOutputStream}
+
 import akka.actor._
 import akka.http.scaladsl.server.PathMatchers
 import akka.stream._
@@ -23,8 +26,13 @@ object WebsocketChat extends App {
   val echoService: Flow[Message, TextMessage, Any] = Flow[Message].collect {
     case TextMessage.Strict(txt) =>
       TextMessage("ECHO: " + txt)
-    case bm: BinaryMessage =>
-      TextMessage("Unacceptable message type")
+    case BinaryMessage.Strict(bs) =>
+      //用于保存文件
+      val filename = "test.data"
+      val out = new FileOutputStream(new File(filename))
+      out.write(bs.toByteBuffer.array())
+      out.close()
+      TextMessage(s"file size is: ${bs.length}")
     // ignore binary messages
   }.keepAlive(45.seconds, () => TextMessage("keepalive"))
   //websocket默认会在60秒后超时,自动发送keepAlive消息,可以配置akka.http.server.idle-timeout超时时间
@@ -33,17 +41,17 @@ object WebsocketChat extends App {
     path("ws-echo") {
       handleWebSocketMessages(echoService)
     } ~
-      pathPrefix("ws-chat" / IntNumber) { chatId =>
-        path(PathMatchers.Segment) { username =>
-          handleWebSocketMessages(ChatRooms.findOrCreate(chatId).chatService(username))
-        }
-      }
-  } ~
-    pathSingleSlash {
-      get {
-        getFromFile("www/websocket.html")
+    pathPrefix("ws-chat" / IntNumber) { chatId =>
+      path(PathMatchers.Segment) { username =>
+        handleWebSocketMessages(ChatRooms.findOrCreate(chatId).chatService(username))
       }
     }
+  } ~
+  pathSingleSlash {
+    get {
+      getFromFile("www/websocket.html")
+    }
+  }
 
   val bindingFuture = Http().bindAndHandle(route, "localhost", 8080)
 }
@@ -61,6 +69,13 @@ class ChatRoom(roomId: Int, actorSystem: ActorSystem) {
       val fromWebsocket = builder.add(
         Flow[Message].collect {
           case TextMessage.Strict(txt) => ChatMessage(user, txt)
+          case BinaryMessage.Strict(bs) =>
+            //用于保存文件
+            val filename = "test.data"
+            val out = new FileOutputStream(new File(filename))
+            out.write(bs.toByteBuffer.array())
+            out.close()
+            ChatMessage(user, s"send file size is: ${bs.length}")
         }
       )
       //flow used as output, it returns Message's
