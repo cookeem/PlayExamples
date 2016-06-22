@@ -20,14 +20,15 @@
         }
     }
     var wsUri = "ws://localhost:8080/ws-chat/"+chatid+"/"+username;
+//    var wsUri = "ws://localhost:8080/ws-echo";
     var output;
-    var i = 0;
+    var websocket = new WebSocket(wsUri);
+
     function init() {
         output = document.getElementById("output");
         testWebSocket();
     }
     function testWebSocket() {
-        websocket = new WebSocket(wsUri);
         websocket.onopen = function(evt) {
             onOpen(evt)
         };
@@ -72,7 +73,23 @@
     window.addEventListener("load", init, false);
 </script>
 <script>
-    //生成uuid
+    //send file through websocket
+    function sendFile() {
+        var file = document.getElementById('filename').files[0];
+        websocket.send('filename:'+file.name);
+        var rawData = new ArrayBuffer();
+        var reader = new FileReader();
+        reader.readAsArrayBuffer(file);
+        reader.onloadend = function() {
+        };
+        reader.onload = function(e) {
+            rawData = e.target.result;
+            websocket.send(rawData);
+        };
+    }
+</script>
+<script>
+    //generate uuid
     function guid() {
         function s4() {
             return Math.floor((1 + Math.random()) * 0x10000)
@@ -85,6 +102,11 @@
     var uuid = guid();
     console.log(uuid);
 </script>
+<h2>File Upload</h2>
+Select file
+<input type="file" id="filename" />
+<br>
+<input type="button" value="Upload" onclick="sendFile()" />
 <h2>WebSocket Test</h2>
 <div>请输入信息：
     <input type="text" name="msg"><input type="submit" value="Send"  onclick="doSend(document.all.msg.value)">
