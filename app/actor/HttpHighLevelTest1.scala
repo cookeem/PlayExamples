@@ -12,6 +12,7 @@ import akka.http.scaladsl.server.Directives._
 object HttpHighLevelTest1 extends App {
   implicit val system = ActorSystem()
   implicit val materializer = ActorMaterializer()
+
   val route =
     get {
       pathSingleSlash {
@@ -21,12 +22,12 @@ object HttpHighLevelTest1 extends App {
           </html>
         }
       } ~
-        path("ping") {
-          complete("PONG!")
-        } ~
-        path("crash") {
-          sys.error("BOOM!")
-        }
+      path("ping") {
+        complete("PONG!")
+      } ~
+      path("crash") {
+        sys.error("BOOM!")
+      }
     }
   // ‘route‘ will be implicitly converted to ‘Flow‘ using ‘RouteResult.route2HandlerFlow‘
   Http().bindAndHandle(route, "localhost", 8080)

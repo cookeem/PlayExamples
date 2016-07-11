@@ -1,6 +1,7 @@
 package actor
 
 import java.io.File
+import java.nio.file.Paths
 
 import akka.{Done, NotUsed}
 import akka.actor.ActorSystem
@@ -27,17 +28,16 @@ object StreamTest1 extends App {
     println(ref)
     ref ! "hello"
   }
-
   //对Source进行阶乘转换transformation
   val factorials = source.scan(BigInt(1)){(acc, next) => acc * next}
   //把Source输出到文件,FileIO是一种Sink,从source到sink,runWith的参数是sink
   val result: Future[IOResult] = factorials.map(num => ByteString(s"$num\n"))
-    .runWith(FileIO.toFile(new File("factorials.txt")))
+    .runWith(FileIO.toPath(Paths.get("factorials.txt")))
 
   //除了source可以重用,sink也可以重用,把sink放到flow的函数中就可以重用
   def lineSink(filename: String): Sink[String, Future[IOResult]] =
     Flow[String].map(s => ByteString(s + "\n"))
-      .toMat(FileIO.toFile(new File(filename)))(Keep.right)
+      .toMat(FileIO.toPath(Paths.get("factorials.txt")))(Keep.right)
 
   //进行sink重用
   val sinkReUsed: Future[IOResult] = factorials.map(_.toString).runWith(lineSink("factorial2.txt"))
@@ -112,4 +112,5 @@ object StreamTest1 extends App {
   filterCounterGraph.run().foreach(println)
   //与上边的graph运行结果一致
   tweets.filter(_.hashtags.contains(akka)).map(t => 1).runWith(sumSink)
+
 }
