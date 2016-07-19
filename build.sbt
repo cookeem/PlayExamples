@@ -36,9 +36,12 @@ libraryDependencies ++= Seq(
   "com.softwaremill.akka-http-session" %% "core" % "0.2.6",
   "org.apache.zookeeper" % "zookeeper" % "3.4.6",
   "edu.uci.ics" % "crawler4j" % "4.2",
+  "com.typesafe.akka" %% "akka-stream-kafka" % "0.11-M4",
   "org.elasticsearch" % "elasticsearch" % "2.3.0",
   "org.jsoup" % "jsoup" % "1.9.1",
-  "mysql" % "mysql-connector-java" % "5.1.37"
+  "mysql" % "mysql-connector-java" % "5.1.37",
+  "com.jcraft" % "jsch" % "0.1.53",
+  "commons-net" % "commons-net" % "3.5"
 )
 
 unmanagedResourceDirectories in Test <+=  baseDirectory ( _ /"target/web/public/test" )
