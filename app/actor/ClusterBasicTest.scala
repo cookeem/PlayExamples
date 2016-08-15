@@ -26,27 +26,27 @@ class SimpleClusterListener extends Actor with ActorLogging {
 
   def receive = {
     case MemberUp(member) =>
-      println(s"### Member is Up: ${self} ${member.address}")
+      log.info(s"Member is Up: ${member.address}")
     case LeaderChanged(addr) =>
-      println(s"### Leader changed: ${self} ${addr}")
+      log.info(s"Leader changed: ${addr}")
     case UnreachableMember(member) =>
-      println(s"### Member Unreachable: ${self} ${member.address}")
+      log.warning(s"Member Unreachable: ${member.address}")
     case MemberRemoved(member, previousStatus) =>
-      println(s"### Member is Removed: ${self} ${member.address} after $previousStatus")
+      log.warning(s"Member is Removed: ${member.address} after $previousStatus")
     case MemberExited(member) =>
-      println(s"### Member is Exited: ${self} ${member.address}")
+      log.warning(s"Member is Exited: ${member.address}")
     case "stop" =>
       cluster.down(cluster.selfAddress)
       //context.system.terminate()
-      println(s"### Member is stop! ${self} ${cluster.selfAddress}")
+      log.info(s"Member is stop! ${cluster.selfAddress}")
     case evt: MemberEvent => // ignore
-      println(s"### Memver event ${self} ${evt.member.status} ${evt.member.address}")
+      log.info(s"Memver event ${evt.member.status} ${evt.member.address}")
   }
 
   //定义集群member removed关闭事件
   cluster.registerOnMemberRemoved{
     // exit JVM when ActorSystem has been terminated
-    println(s"cluster.system.registerOnTermination(System.exit(0))")
+    log.warning(s"cluster.system.registerOnTermination(System.exit(0))")
     cluster.system.registerOnTermination(System.exit(0))
     cluster.system.terminate()
     // In case ActorSystem shutdown takes longer than 10 seconds,
@@ -71,7 +71,7 @@ object ClusterBasicTest extends App {
   def startup(ports: Seq[String]): Unit = {
     val configStr = """
       akka {
-        loglevel = "WARNING"
+        loglevel = "INFO"
         log-dead-letters = off
         actor {
           provider = "akka.cluster.ClusterActorRefProvider"

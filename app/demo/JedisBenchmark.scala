@@ -17,6 +17,7 @@ object JedisBenchmark extends App {
   val jedisByPool: Jedis = jedisPool.getResource
 
   val jedis: Jedis = new Jedis("localhost", 6379)
+  jedis.setDataSource(jedisPool)
 
   //测试redis插入性能,100000一个batch提交,测试总量1亿个记录
   var begin = System.currentTimeMillis()

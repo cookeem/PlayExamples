@@ -12,7 +12,7 @@ import org.apache.commons.io.FileUtils
 object SFTPTest1 extends App {
   val serverAddress = "localhost"
   val userId = "cookeem"
-  val password = "man8080"
+  val password = "asdasd"
   val remoteDirectory = "/Volumes/Share/Download/remoteDir/"
   val localDirectory = "/Volumes/Share/Download/localDir/"
   val port = 22

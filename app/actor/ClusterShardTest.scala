@@ -91,7 +91,7 @@ object ClusterShardObj {
     journal.class = "akka.persistence.journal.sqlasync.MySQLAsyncWriteJournal"
     snapshot-store.class = "akka.persistence.snapshot.sqlasync.MySQLSnapshotStore"
     user = "root"
-    password = "man8080"
+    password = "asdasd"
     url = "jdbc:mysql://localhost/akka_persistence"
     max-pool-size = 4
     wait-queue-capacity = 10000

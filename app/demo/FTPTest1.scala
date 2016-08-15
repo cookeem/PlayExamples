@@ -17,7 +17,7 @@ object FTPTest1 extends App {
   val server = "localhost"
   val port = 21
   val user = "cookeem"
-  val password = "man8080"
+  val password = "asdasd"
   var ftpClient: FTPClient = null
   if (proxyHost == "") {
     ftpClient = new FTPClient()
@@ -31,11 +31,13 @@ object FTPTest1 extends App {
   //连接
   ftpClient.connect(server, port)
   ftpClient.login(user, password)
+  ftpClient.isConnected
 
   //设置
   ftpClient.enterLocalPassiveMode()
   ftpClient.setFileType(FTP.BINARY_FILE_TYPE)
-  ftpClient.setControlKeepAliveTimeout(30L)
+  ftpClient.setKeepAlive(true)
+  ftpClient.setControlKeepAliveTimeout(30*1000L)
 
   //上传
   val filename = "NOTICE"
@@ -52,6 +54,7 @@ object FTPTest1 extends App {
   ftpClient.retrieveFile(s"$remotePath$filename2", fos)
   fos.close()
 
+  //TODO: 完善目录操作
   //目录操作
   ftpClient.changeToParentDirectory()
   ftpClient.getReplyString

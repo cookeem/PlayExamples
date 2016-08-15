@@ -41,7 +41,10 @@ libraryDependencies ++= Seq(
   "org.jsoup" % "jsoup" % "1.9.1",
   "mysql" % "mysql-connector-java" % "5.1.37",
   "com.jcraft" % "jsch" % "0.1.53",
-  "commons-net" % "commons-net" % "3.5"
+  "commons-net" % "commons-net" % "3.5",
+  "commons-cli" % "commons-cli" % "1.3.1",
+  "com.google.zxing" % "core" % "3.2.1",
+  "org.apache.commons" % "commons-csv" % "1.4"
 )
 
 unmanagedResourceDirectories in Test <+=  baseDirectory ( _ /"target/web/public/test" )

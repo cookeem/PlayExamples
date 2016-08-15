@@ -141,7 +141,7 @@ class JobService extends ClusterRouterTrait with ActorLogging {
   //通过routerGroup调用JobRouter创建的routees
   val serviceRouter = context.actorOf(
     ClusterRouterGroup(
-      RandomGroup(routeesPaths),
+      RoundRobinGroup(routeesPaths),
       ClusterRouterGroupSettings(
         totalInstances = 100,
         routeesPaths = routeesPaths,
@@ -196,7 +196,7 @@ object ClusterRouterTest extends App {
     var counter = 0
     import system.dispatcher
     if (clusterType == "service") {
-      system.scheduler.schedule(5.seconds, 5.seconds) {
+      system.scheduler.schedule(10.seconds, 10.seconds) {
         counter += 1
         val msg = s"Now the counter is: $counter"
         println(msg)

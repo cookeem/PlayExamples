@@ -31,7 +31,7 @@ object HttpsTest1 extends App {
   * Create p12 file from cert file and key file: openssl pkcs12 -export -out cookeem.com.pfx -inkey 4_user_cookeem.com.key -in 3_user_cookeem.com.crt
   */
   val serverContext: ConnectionContext = {
-    val password = "man8080".toCharArray
+    val password = "asdasd".toCharArray
     val context = SSLContext.getInstance("TLS")
     val ks = KeyStore.getInstance("PKCS12")
     ks.load(new FileInputStream("https/keys/cookeem.com.pfx"), password)

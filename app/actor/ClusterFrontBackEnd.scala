@@ -8,8 +8,8 @@ import akka.pattern.ask
 import akka.util.Timeout
 import com.typesafe.config.ConfigFactory
 
+import scala.collection.JavaConversions._
 import scala.concurrent.duration._
-
 import TransformationObj._
 
 /**
@@ -22,6 +22,12 @@ import TransformationObj._
  * sbt "run-main actor.TransformationFrontend"
  * sbt "run-main actor.TransformationFrontend"
  */
+case class TransformationJob(text: String)
+case class TransformationResult(text: String)
+case class JobFailed(reason: String, job: TransformationJob)
+case object BackendRegistration
+case object FrontendRegistration
+
 object TransformationObj {
   val configStr = """
   akka {
@@ -29,6 +35,39 @@ object TransformationObj {
     log-dead-letters = off
     actor {
       provider = "akka.cluster.ClusterActorRefProvider"
+      kryo  { #Kryo序列化的配置
+        type = "graph"
+        idstrategy = "incremental"
+        serializer-pool-size = 16
+        buffer-size = 4096
+        use-manifests = false
+        implicit-registration-logging = true
+        kryo-trace = false
+        classes = [
+          "java.lang.String",
+          "scala.Some",
+          "scala.None$",
+          "actor.TransformationJob",
+          "actor.TransformationResult",
+          "actor.JobFailed",
+          "actor.BackendRegistration$",
+          "actor.FrontendRegistration$"
+        ]
+      }
+      serializers { #配置可能使用的序列化算法
+        java = "akka.serialization.JavaSerializer"
+        kryo = "com.romix.akka.serialization.kryo.KryoSerializer"
+      }
+      serialization-bindings { #配置序列化类与算法的绑定
+        "java.lang.String"=kryo
+        "scala.Some"=kryo
+        "scala.None$"=kryo
+        "actor.TransformationJob"=kryo
+        "actor.TransformationResult"=kryo
+        "actor.JobFailed"=kryo
+        "actor.BackendRegistration$"=kryo
+        "actor.FrontendRegistration$"=kryo
+      }
     }
     remote {
       log-remote-lifecycle-events = off
@@ -46,11 +85,6 @@ object TransformationObj {
       auto-down-unreachable-after = 10s
     }
   }"""
-  case class TransformationJob(text: String)
-  case class TransformationResult(text: String)
-  case class JobFailed(reason: String, job: TransformationJob)
-  case object BackendRegistration
-  case object FrontendRegistration
 }
 
 trait TransformationCluster extends Actor {
@@ -163,6 +197,9 @@ object TransformationFrontend extends App {
   var counter = 0
   import system.dispatcher
   system.scheduler.schedule(5.seconds, 5.seconds) {
+    Cluster(system).state.getMembers.foreach { member =>
+      println("@@@" + member.address, member.status, member.getRoles)
+    }
     counter += 1
     implicit val timeout = Timeout(5 seconds)
     println(s"""###$frontend ? TransformationJob("hello-" + $counter)""")
