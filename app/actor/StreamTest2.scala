@@ -1,5 +1,6 @@
 package actor
 
+import akka.event.Logging
 import akka.{Done, NotUsed}
 import akka.actor.{Props, ActorRef, ActorSystem}
 import akka.stream._
@@ -254,4 +255,15 @@ object StreamTest2 extends App {
   zipwithed.runForeach(println)
   //broadcast
   sourceOne.alsoTo(Sink.foreach(t => println(s"alsoTo($t)"))).runForeach(t => println(s"runForeach $t"))
+
+  Source.combine(Source(1 to 10), Source(101 to 110)){t => Merge(t)}.runForeach(println)
+
+  val sinkX1 = Sink.foreach[Int]{t => println(s"s1: $t")}
+  val sinkX2 = Sink.foreach[Int]{t => println(s"s2: $t")}
+  val sinkX = Sink.combine(sinkX1, sinkX2){Broadcast[Int](_)}
+  Source(1 to 10).to(sinkX).run()
+
+  implicit val adapter = Logging(system, "customLogger")
+  Source(1 to 10).log("custom")
+
 }

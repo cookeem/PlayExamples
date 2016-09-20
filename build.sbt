@@ -5,7 +5,7 @@ version := "1.0"
 lazy val `playexamples` = (project in file(".")).enablePlugins(PlayScala)
 
 scalaVersion := "2.11.8"
-val akkaV = "2.4.7"
+val akkaV = "2.4.8"
 libraryDependencies ++= Seq(
   jdbc , cache , ws , filters,
   "org.scala-lang.modules" %% "scala-async" % "0.9.5",
@@ -44,7 +44,13 @@ libraryDependencies ++= Seq(
   "commons-net" % "commons-net" % "3.5",
   "commons-cli" % "commons-cli" % "1.3.1",
   "com.google.zxing" % "core" % "3.2.1",
-  "org.apache.commons" % "commons-csv" % "1.4"
+  "org.apache.commons" % "commons-csv" % "1.4",
+  "org.bytedeco.javacpp-presets" % "ffmpeg" % "3.1.2-1.2",
+  "org.reactivemongo" %% "reactivemongo" % "0.11.14",
+  "org.reactivemongo" %% "reactivemongo-play-json" % "0.11.14"
 )
+
+libraryDependencies += "com.lihaoyi" % "ammonite_2.11.8" % "0.7.4"
+initialCommands in console := """ammonite.Main().run()"""
 
 unmanagedResourceDirectories in Test <+=  baseDirectory ( _ /"target/web/public/test" )
