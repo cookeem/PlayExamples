@@ -62,10 +62,22 @@ class ChatRoom(roomId: Int, actorSystem: ActorSystem) {
 
   val source = Source.actorRef[ChatEvent](bufferSize = Int.MaxValue, OverflowStrategy.fail)
 
+
+  /* FlowShape
+  {{
+         +------------------------------------------------------------+
+  In  ~> | ~> fromWebsocket ~> +-------------+                        |
+         |                     |chatActorSink| ....                   |
+         |    actorAsSource ~> +-------------+    . chatRoomActor     |
+         |                                        . to broadcast      |
+  Out ~> | <~ backToWebsocket <~ chatSource <......                   |
+         +------------------------------------------------------------+
+  }}
+  */
   def chatService(user: String) = Flow.fromGraph(GraphDSL.create(source) { implicit builder =>
-    chatSource => //source provideed as argument
+    chatSource => //把source作为参数传入Graph
       import GraphDSL.Implicits._
-      //flow used as input it takes Message's
+      //从websocket接收Message，并转化成ChatMessage
       val fromWebsocket = builder.add(
         Flow[Message].collect {
           case TextMessage.Strict(txt) => ChatMessage(user, txt)
@@ -78,27 +90,27 @@ class ChatRoom(roomId: Int, actorSystem: ActorSystem) {
             ChatMessage(user, s"send file size is: ${bs.length}")
         }
       )
-      //flow used as output, it returns Message's
+      //把ChatMessage转化成Message，并输出到websocket
       val backToWebsocket = builder.add(
         Flow[ChatEvent].collect {
           case ChatMessage(author, text) => TextMessage(s"[$author]: $text")
         }
       )
-      //send messages to the actor, if send also UserLeft(user) before stream completes.
+      //把消息发送到chatRoomActor，chatRoomActor收到消息后会进行广播, 假如流结束的时候，向chatRoomActor发送UserLeft消息
       val chatActorSink = Sink.actorRef[ChatEvent](chatRoomActor, UserLeft(user))
-      //merges both pipes
+      //聚合管道
       val merge = builder.add(Merge[ChatEvent](2))
-      //Materialized value of Actor who sit in chatroom, 获取来源的stream actor
+      //进行流的物料化，当有新的流创建的时候，向该流中发送UserJoined(user, actor)消息
       val actorAsSource = builder.materializedValue.map(actor => UserJoined(user, actor))
-      //Message from websocket is converted into IncommingMessage and should be send to each in room
+      //聚合websocket的消息来源
       fromWebsocket ~> merge.in(0)
-      //If Source actor is just created should be send as UserJoined and registered as particiant in room
+      //当有新的流创建的是否，发送UserJoined(user, actor)消息到聚合merge
       actorAsSource ~> merge.in(1)
-      //Merges both pipes above and forward messages to chatroom Represented by ChatRoomActor
+      //把聚合merge消息发送到chatRoomActor，注意chatActorSink会广播消息到各个chatroom的chatSource
       merge ~> chatActorSink
-      //Actor already sit in chatRoom so each message from room is used as source and pushed back into websocket
+      //chatSource收到广播消息之后，把消息发送给backToWebsocket
       chatSource ~> backToWebsocket
-      // expose ports
+      //暴露端口：fromWebsocket.in, backToWebsocket.out
       FlowShape(fromWebsocket.in, backToWebsocket.out)
   }).keepAlive(45.seconds, () => TextMessage("keepalive"))
 }

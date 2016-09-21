@@ -9,6 +9,7 @@ import play.api.libs.json._
 import reactivemongo.api.collections.bson.BSONCollection
 import reactivemongo.api._
 import reactivemongo.api.commands.Command
+import reactivemongo.api.commands.Command.CommandWithPackRunner
 import reactivemongo.bson._
 import reactivemongo.play.json._
 import reactivemongo.play.json.collection._
@@ -98,8 +99,9 @@ object ReactiveMongoDemo extends App {
 
   //runCommand
   newdb.foreach {db =>
+    val runner: CommandWithPackRunner[BSONSerializationPack.type] = Command.run(BSONSerializationPack)
     val commandDoc = BSONDocument("find" -> "users")
-    val futureDoc = db.runCommand(Command.run(BSONSerializationPack).rawCommand(commandDoc)).one[BSONDocument]
+    val futureDoc = runner(db, runner.rawCommand(commandDoc)).one[BSONDocument]
     futureDoc.foreach { doc =>
       val json = Json.toJson(doc)
       println(Json.prettyPrint((json \ "cursor" \ "firstBatch").getOrElse(JsNull)))

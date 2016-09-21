@@ -1,6 +1,5 @@
 package actor
 
-import java.io.File
 import java.nio.file.Paths
 
 import akka.{Done, NotUsed}
@@ -112,5 +111,12 @@ object StreamTest1 extends App {
   filterCounterGraph.run().foreach(println)
   //与上边的graph运行结果一致
   tweets.filter(_.hashtags.contains(akka)).map(t => 1).runWith(sumSink)
+
+
+  val consumer = Sink.foreach(println)
+  val runnableGraph = MergeHub.source[String](perProducerBufferSize = 16).to(consumer)
+  val toConsumer = runnableGraph.run()
+  Source.single("Hello!").runWith(toConsumer)
+  Source.single("Hub!").runWith(toConsumer)
 
 }

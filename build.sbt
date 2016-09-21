@@ -5,7 +5,7 @@ version := "1.0"
 lazy val `playexamples` = (project in file(".")).enablePlugins(PlayScala)
 
 scalaVersion := "2.11.8"
-val akkaV = "2.4.8"
+val akkaV = "2.4.10"
 libraryDependencies ++= Seq(
   jdbc , cache , ws , filters,
   "org.scala-lang.modules" %% "scala-async" % "0.9.5",
